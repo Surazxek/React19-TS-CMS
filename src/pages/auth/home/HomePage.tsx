@@ -18,7 +18,14 @@ export default function HomePage() {
       </div>
       
      
-       <PageHeading />
+       {/* <PageHeading  pageTitle="Login here"/>  we can also load like this*/}
+
+       <PageHeading  >
+        <em>Login Here</em>
+        
+      </PageHeading> 
+      
+
        </div>
         <LoginForm />
         </div>
