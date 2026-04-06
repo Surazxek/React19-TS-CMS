@@ -20,3 +20,13 @@ export const PageHeading = (
     </h1>
   );
 };
+
+export const Subheading = (
+  { pageTitle, className = "text-indigo-900", children }: Readonly<IpageHeadingProps>
+) => {
+  return (
+    <h2 className={`text-3xl font-semibold ${className}`}>
+      {children || pageTitle}
+    </h2>
+  );
+};
