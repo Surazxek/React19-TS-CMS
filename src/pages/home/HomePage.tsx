@@ -1,8 +1,8 @@
 
-import LoginForm from "../../../components/auth/LoginForm";
+import LoginForm from "../../components/auth/LoginForm";
 
-import logo  from "../../../assets/css/images/logo.png"
-import { PageHeading } from "../../../components/ui/typography/Title";
+import logo  from "../../assets/css/images/logo.png"
+import { PageHeading } from "../../components/ui/typography/Title";
 
 
 export default function HomePage() {

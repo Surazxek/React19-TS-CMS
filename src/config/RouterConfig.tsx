@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
-import HomePage from "../pages/auth/home/HomePage";
+import HomePage from "../pages/home/HomePage";
 import ForgetPasswordPage from "../pages/auth/ForgetPassword";
 import NotFound from "../pages/error/NotFound";
 import UserLayout from "../pages/layouts/UserLayout";

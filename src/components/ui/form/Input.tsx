@@ -1,13 +1,15 @@
-import React from "react";
+import React, { type BaseSyntheticEvent } from "react";
 
 interface ITextInputProps {
   className?: string;
   name: string;
   type?: React.HTMLInputTypeAttribute;
+  handleChange: (e: BaseSyntheticEvent) => void;
+  value: string;
 }
 
 export const TextInput = (
-  { className = "", name, type = "text" }: Readonly<ITextInputProps>
+  { className = "", name, type = "text", handleChange, value }: Readonly<ITextInputProps>
 ) => {
   return (
     <input
@@ -15,6 +17,8 @@ export const TextInput = (
       type={type}
       id={name}
       name={name}
+      value={value}            
+      onChange={handleChange}
       placeholder={`Enter your ${name}`}
     />
   );
