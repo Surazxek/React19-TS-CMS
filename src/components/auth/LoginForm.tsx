@@ -1,14 +1,19 @@
-import { useState, type BaseSyntheticEvent } from "react";
 import { FormActionButton } from "../ui/buttons/FormButtons";
 import { TextInput } from "../ui/form/Input";
 import { FormLabel } from "../ui/form/Label";
-import { z, ZodError } from "zod";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-
+// Validation
 const LoginDTO = z.object({
-  username: z.string().min(4).max(30),
-  password: z.string().nonempty()
-})
+  username: z
+    .string()
+    .min(4, "Username must be at least 4 characters")
+    .max(30, "Username cannot exceed 30 characters"),
+
+  password: z.string().nonempty("Password is required"), 
+});
 
 export interface ICredentials {
   username: string;
@@ -16,67 +21,55 @@ export interface ICredentials {
 }
 
 export default function LoginForm() {
-  const [credentials, setCredentials] = useState<ICredentials>({
-    username: "",
-    password: "",
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ICredentials>({
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+    resolver: zodResolver(LoginDTO),
   });
 
-  const handleChange = (e: BaseSyntheticEvent) => {
-    const { value, name } = e.target;
-
-    setCredentials({
-      ...credentials,
-      [name]: value,
-    });
-  };
-
-  const handleLogin = async (e: BaseSyntheticEvent) => {
-    e.preventDefault();
-  
-    try {
-      const validData = await LoginDTO.parseAsync(credentials);
-      console.log("Valid:", validData);
-    } catch (err) {
-      if (err instanceof ZodError) {
-        console.log(err.issues); 
-      } else {
-        console.log("Unknown error:", err); 
-      }
-    }
+  const handleLogin = (data: ICredentials) => {
+    console.log( data);
   };
 
   return (
-    <form onSubmit={handleLogin} className="flex w-full flex-col gap-5">
-      
-      {/* //username */}
-
+    <form
+      onSubmit={handleSubmit(handleLogin)}
+      className="flex w-full flex-col gap-5"
+    >
       <div className="w-full flex flex-col gap-1">
         <FormLabel htmlFor="username">Username:</FormLabel>
-        <TextInput
+
+        <TextInput<ICredentials>
           name="username"
           type="text"
-          value={credentials.username}
-          handleChange={handleChange}
+          control={control}
+          errMsg={errors?.username?.message}
         />
       </div>
 
-      {/* //Password */}
-      
       <div className="w-full flex flex-col gap-1">
         <FormLabel htmlFor="password">Password:</FormLabel>
-        <TextInput
+
+        <TextInput<ICredentials>
           name="password"
           type="password"
-          value={credentials.password}
-          handleChange={handleChange}
+          control={control}
+          errMsg={errors?.password?.message} // updated
         />
       </div>
-
-     {/* //buttons */}
 
       <div className="w-full flex gap-3">
         <FormActionButton type="reset">Cancel</FormActionButton>
-        <FormActionButton type="submit">Login</FormActionButton>
+
+        <FormActionButton type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Logging in..." : "Login"}
+        </FormActionButton>
       </div>
     </form>
   );
