@@ -4,6 +4,9 @@ import { FormLabel } from "../ui/form/Label";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import Cookies from "js-cookie";
+import axiosInstance from "../../lib/client/axios-client";
 
 // Validation
 const LoginDTO = z.object({
@@ -12,7 +15,7 @@ const LoginDTO = z.object({
     .min(4, "Username must be at least 4 characters")
     .max(30, "Username cannot exceed 30 characters"),
 
-  password: z.string().nonempty("Password is required"), 
+  password: z.string().min(1, "Password is required"),
 });
 
 export interface ICredentials {
@@ -33,8 +36,37 @@ export default function LoginForm() {
     resolver: zodResolver(LoginDTO),
   });
 
-  const handleLogin = (data: ICredentials) => {
-    console.log( data);
+  const handleLogin = async (data: ICredentials) => {
+    try {
+      const response = await axiosInstance.post("/auth/login", {
+        ...data,
+        expiresInMins: 180,
+      });
+      
+    console.log(response);
+      //session  //expires day  
+      Cookies.set("_at_60", response.data.accessToken,{
+        expires: 1, 
+        sameSite: "lax",
+        secure: true,
+      })
+
+      Cookies.set("_at_60", response.data.refreshToken,{
+        expires: 1, 
+        sameSite: "lax",
+        secure: true,
+      })
+  
+      
+  
+      toast.success("Login successful");
+  
+    } catch (exception) {
+     console.log({exception})
+      toast.error("Error while Logging in",{
+        description: "Check your Credentials Again Error"
+      })
+    }
   };
 
   return (
@@ -44,8 +76,7 @@ export default function LoginForm() {
     >
       <div className="w-full flex flex-col gap-1">
         <FormLabel htmlFor="username">Username:</FormLabel>
-
-        <TextInput<ICredentials>
+        <TextInput
           name="username"
           type="text"
           control={control}
@@ -55,18 +86,16 @@ export default function LoginForm() {
 
       <div className="w-full flex flex-col gap-1">
         <FormLabel htmlFor="password">Password:</FormLabel>
-
-        <TextInput<ICredentials>
+        <TextInput
           name="password"
           type="password"
           control={control}
-          errMsg={errors?.password?.message} // updated
+          errMsg={errors?.password?.message}
         />
       </div>
 
       <div className="w-full flex gap-3">
         <FormActionButton type="reset">Cancel</FormActionButton>
-
         <FormActionButton type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Logging in..." : "Login"}
         </FormActionButton>

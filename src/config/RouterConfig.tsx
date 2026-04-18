@@ -5,39 +5,37 @@ import NotFound from "../pages/error/NotFound";
 import UserLayout from "../pages/layouts/UserLayout";
 import AdminLayout from "../pages/layouts/AdminLayout";
 import UserCreate from "../pages/user/UserCreate";
-
-
+import UserList from "../pages/user/UserList";
+import ResetPassword from "../pages/auth/ResetPassword";
 
 const routerConf = createBrowserRouter([
-{ path: "/", element: <HomePage /> },
-  { path: "/forget-password", Component: ForgetPasswordPage },
-  // { path: "/", element: < ForgetPasswordPage /> },
+  { path: "/", element: <HomePage /> },
 
- {path: "/admin", element: <AdminLayout />, children: [
-  {path: "user/create", element: <UserCreate />}
- ]},
-  //path: /admin/user/create
-  //develop a form to accept the following 
-  //firstName, lastaName, userName, email, gender, password, birthDate,
-  // university, company : {department, name , title, } , address, role: (admin, user, moderator)
-  
-  {path: "/user", element: <UserLayout />, children: [
-    {index: true, element: <> Dashboard (KPI)</> },
-    {path: "*", element: <NotFound  />},
-  ]},
+  { path: "/forget-password", element: <ForgetPasswordPage /> },
 
+  { path: "/reset-password", element: <ResetPassword /> },
 
+  {
+    path: "/admin",
+    element: <AdminLayout />,
+    children: [
+      { path: "users", element: <UserList /> },
+      { path: "user/create", element: <UserCreate /> },
+    ],
+  },
 
+  {
+    path: "/user",
+    element: <UserLayout />,
+    children: [
+      { index: true, element: <>Dashboard (KPI)</> },
+      { path: "*", element: <NotFound /> },
+    ],
+  },
 
-
-
-
-  {path: "*", element: <NotFound  />}
-  // {path: "*", element: <NotFound url="/forget-password" linkText="Go back to Login page" />}
+  { path: "*", element: <NotFound /> },
 ]);
 
 export default function RouterConfig() {
-  //Declearative or Data
-
   return <RouterProvider router={routerConf} />;
 }

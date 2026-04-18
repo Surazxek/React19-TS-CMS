@@ -1,46 +1,77 @@
-import React from "react";
-import {
-  useController,
-  type Control,
-  type FieldValues,
-  type Path,
-} from "react-hook-form";
+import React, { type ReactNode } from "react";
+import { useController, type Control, type FieldValues, type Path } from "react-hook-form";
 
 interface ITextInputProps<T extends FieldValues> {
   className?: string;
   name: Path<T>;
   type?: React.HTMLInputTypeAttribute;
-  control: Control<T>;
-  errMsg?: string;
+  control: Control<T>,
+  errMsg?: string,
+  placeholder?: string
 }
 
-export const TextInput = <T extends FieldValues>({
-  className = "",
-  name,
-  type = "text",
-  control,
-  errMsg,
-}: Readonly<ITextInputProps<T>>) => {
-  const { field } = useController({
-    name: name,
-    control: control,
-  });
+interface ISingleOption{
+  label: ReactNode, value: string
+}
 
+interface ISelectInputProps<T extends FieldValues> {
+  className?: string;
+  name: Path<T>;
+  control: Control<T>;
+  errMsg?: string;
+  options: Array<ISingleOption>
+}
+
+export const TextInput = <T extends FieldValues>({className = "",name,type = "text", control, errMsg='', placeholder="Enter your value"}: Readonly<ITextInputProps<T>>) => {
+  // self state manage 
+  const {field} = useController({
+    name: name,
+    control: control
+  })
   return (
     <>
       <input
-        className={`w-full p-2 border border-gray-200 shadow-md rounded-md bg-gray-50 ${className}`}
+        className={`w-full p-2 border border-gray-400 shadow-md rounded-md bg-gray-50 ${className}`}
         type={type}
         {...field}
-        placeholder={`Enter your ${name}`}
+        placeholder={placeholder}
       />
-      <span className="text-red-700 text-sm font-light italic">
-        {errMsg}
-      </span>
+      <span className="text-red-700 text-sm font-light italic">{errMsg}</span>
     </>
   );
 };
 
+export const SelectInput = <T extends FieldValues>({
+  className = "",
+  name,
+  control,
+  errMsg = "",
+  options
+}: Readonly<ISelectInputProps<T>>) => {
+  // self state manage
+  const { field } = useController({
+    name: name,
+    control: control,
+  });
+  return (
+    <>
+      <select
+        className={`w-full p-2 border border-gray-400 shadow-md rounded-md bg-gray-50 ${className}`}
+        {...field}
+      >
+        <option value="">--Select Any one--</option>
+        {
+          options && options.map((option: ISingleOption) => {
+            return <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          })
+        }
+      </select>
+      <span className="text-red-700 text-sm font-light italic">{errMsg}</span>
+    </>
+  );
+};
 
 
 
